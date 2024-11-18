@@ -239,8 +239,7 @@ function eliminarFila(fila) {
                 window.open(whatsappUrl, '_blank');
             }
         });
-    }) .catch(function(error) {
-      console.error('Error al capturar la imagen:', error);
-  });
-};
-
+    
+  }
+}
+  }
