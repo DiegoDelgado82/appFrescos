@@ -1,7 +1,23 @@
 $(function () {
-    // Cargar listado desde localStorage al cargar la página
-    cargarListadoDesdeLocalStorage();
+  $(document).ready(function() {
+    // Recuperar los productos guardados desde localStorage
+    var productosGuardados = JSON.parse(localStorage.getItem('productos')) || [];
   
+    // Renderizar la tabla con los productos guardados
+    renderizarTabla(productosGuardados);
+  });
+  
+  function renderizarTabla(productos) {
+    // Limpiar la tabla antes de agregar los productos
+    $("#tablaProductos tbody").empty();
+  
+    // Agregar cada producto a la tabla
+    productos.forEach(function(producto) {
+      var fila = "<tr><td>" + producto.ean + "</td><td>" + producto.cantidad + "</td><td>" + producto.nombre + "</td><td>" + producto.tipoPrecio + "</td></tr>";
+      $("#tablaProductos tbody").append(fila);
+    });
+  }
+    
     // Obtener productos desde un archivo JSON usando una promesa
     $.getJSON("./productos.json")
       .done(function (data) {
