@@ -218,7 +218,8 @@ function eliminarFila(fila) {
   }
   function realizarCaptura() {
     // Captura la tabla y la convierte en una imagen
-    html2canvas(document.getElementById('tablaProductos')).then(function(canvas) {
+    html2canvas(document.getElementById('tablaProductos')), {
+      onrendered: function(canvas) {
         // Crea una imagen a partir del canvas
         var image = canvas.toDataURL(); // Convertir el canvas en una imagen en base64
         console.log(image);  // Otras acciones como abrir WhatsApp o guardar la imagen
