@@ -8,6 +8,8 @@
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
   <!-- Enlace a jQuery UI para el autocompletado -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
+
 </head>
 <body>
   
@@ -63,6 +65,8 @@
     
    
     <button type="button" class="btn btn-success" onclick="descargarExcel()">Descargar Excel</button>
+    <button type="button" class="btn btn-warning" onclick="realizarCaptura()">Realizar Captura de Lista</button>
+
     <button type="button" class="btn btn-danger" onclick="borrarListado()">Borrar Listado</button>
     <!-- Tabla para mostrar productos seleccionados -->
     <table class="table mt-4" id="tablaProductos">

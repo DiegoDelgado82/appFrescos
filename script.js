@@ -117,7 +117,7 @@ function editarFila(fila) {
           fila.find('td:eq(1)').text(result.value.nuevaCantidad);
           fila.find('td:eq(2)').text(result.value.nuevaDescripcion);
           fila.find('td:eq(3)').text(result.value.nuevoTipoPrecio);
-          Swal.fire('Actualizado', 'El producto ha sido modificado correctamente.', 'success');
+          //Swal.fire('Actualizado', 'El producto ha sido modificado correctamente.', 'success');
       }
   });
 }
@@ -166,7 +166,7 @@ function agregarALista() {
 // Función para eliminar una fila
 function eliminarFila(fila) {
   fila.remove();
-  Swal.fire('Eliminado', 'El producto ha sido eliminado.', 'success');
+  //Swal.fire('Eliminado', 'El producto ha sido eliminado.', 'success');
 }
 
   function guardarListadoEnLocalStorage() {
@@ -216,4 +216,26 @@ function eliminarFila(fila) {
     $("#tablaProductos tbody").empty();
     localStorage.removeItem("listadoProductos");
   }
-  
+  function realizarCaptura() {
+    // Captura la tabla y la convierte en una imagen
+    html2canvas(document.getElementById('tablaProductos')).then(function(canvas) {
+        // Crea una imagen a partir del canvas
+        var imgData = canvas.toDataURL("image/png");
+
+        // Abre el enlace de WhatsApp
+        var whatsappUrl = `https://wa.me/?text=Lista%20de%20productos%20adjunta.%0A%0A${encodeURIComponent(imgData)}`;
+        
+        // Preguntar al usuario si quiere abrir WhatsApp
+        Swal.fire({
+            title: '¿Desea enviar la lista por WhatsApp?',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Sí',
+            cancelButtonText: 'No',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.open(whatsappUrl, '_blank');
+            }
+        });
+    });
+}
