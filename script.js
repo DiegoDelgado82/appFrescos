@@ -220,10 +220,11 @@ function eliminarFila(fila) {
     // Captura la tabla y la convierte en una imagen
     html2canvas(document.getElementById('tablaProductos')).then(function(canvas) {
         // Crea una imagen a partir del canvas
-        var imgData = canvas.toDataURL("image/png");
+        var image = canvas.toDataURL(); // Convertir el canvas en una imagen en base64
+        console.log(image);  // Otras acciones como abrir WhatsApp o guardar la imagen
 
         // Abre el enlace de WhatsApp
-        var whatsappUrl = `https://wa.me/?text=Lista%20de%20productos%20adjunta.%0A%0A${encodeURIComponent(imgData)}`;
+        var whatsappUrl = `https://wa.me/?text=Lista%20de%20productos%20adjunta.%0A%0A${encodeURIComponent(image)}`;
         
         // Preguntar al usuario si quiere abrir WhatsApp
         Swal.fire({
@@ -237,5 +238,8 @@ function eliminarFila(fila) {
                 window.open(whatsappUrl, '_blank');
             }
         });
-    });
-}
+    }) .catch(function(error) {
+      console.error('Error al capturar la imagen:', error);
+  });
+};
+
