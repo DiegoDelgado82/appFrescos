@@ -69,31 +69,106 @@ $(function () {
     $("#tablaProductos tbody").append(filaHtml);
   }
   
-  function editarFila(boton) {
-    var fila = $(boton).closest("tr");
-    var ean = fila.find("td:eq(0)").text();
-    var cantidad = fila.find("td:eq(1)").text();
-    var descripcion = fila.find("td:eq(2)").text();
-    var tipoPrecio = fila.find("td:eq(3)").text();
-  
-    // Cargar valores en los campos de entrada
-    $("#buscarProducto").val(descripcion);
-    $("#cantidad").val(cantidad);
-    $("input[name='tipoPrecio'][value='" + tipoPrecio + "']").prop("checked", true);
-  
-    // Eliminar la fila de la tabla
-    fila.remove();
-  
-    // Actualizar el localStorage
-    guardarListadoEnLocalStorage();
+ // Función para abrir el modal y editar la fila seleccionada
+function editarFila(fila) {
+  // Obtén los datos de la fila seleccionada
+  const ean = fila.find('td:eq(0)').text();
+  const cantidad = fila.find('td:eq(1)').text();
+  const descripcion = fila.find('td:eq(2)').text();
+  const tipoPrecio = fila.find('td:eq(3)').text();
+
+  // Usa SweetAlert2 para mostrar un modal
+  Swal.fire({
+      title: 'Editar Producto',
+      html: `
+          <label>EAN:</label>
+          <input type="text" id="editEAN" class="swal2-input" value="${ean}" disabled>
+          <label>Cantidad:</label>
+          <input type="number" id="editCantidad" class="swal2-input" value="${cantidad}" min="1">
+          <label>Descripción:</label>
+          <input type="text" id="editDescripcion" class="swal2-input" value="${descripcion}">
+          <label>Tipo Precio:</label>
+          <select id="editTipoPrecio" class="swal2-input">
+              <option value="A4" ${tipoPrecio === 'A4' ? 'selected' : ''}>A4</option>
+              <option value="semáforo" ${tipoPrecio === 'semáforo' ? 'selected' : ''}>Semáforo</option>
+              <option value="peroquet" ${tipoPrecio === 'peroquet' ? 'selected' : ''}>Peroquet</option>
+              <option value="imagen" ${tipoPrecio === 'imagen' ? 'selected' : ''}>Imagen</option>
+          </select>
+      `,
+      confirmButtonText: 'Guardar',
+      showCancelButton: true,
+      cancelButtonText: 'Cancelar',
+      preConfirm: () => {
+          // Obtener los nuevos valores ingresados por el usuario
+          const nuevaCantidad = document.getElementById('editCantidad').value;
+          const nuevaDescripcion = document.getElementById('editDescripcion').value;
+          const nuevoTipoPrecio = document.getElementById('editTipoPrecio').value;
+
+          if (!nuevaCantidad || nuevaCantidad <= 0 || !nuevaDescripcion.trim()) {
+              Swal.showValidationMessage('Todos los campos deben estar completos y la cantidad debe ser mayor a 0.');
+              return false;
+          }
+
+          return { nuevaCantidad, nuevaDescripcion, nuevoTipoPrecio };
+      }
+  }).then((result) => {
+      if (result.isConfirmed) {
+          // Actualiza la fila con los nuevos valores
+          fila.find('td:eq(1)').text(result.value.nuevaCantidad);
+          fila.find('td:eq(2)').text(result.value.nuevaDescripcion);
+          fila.find('td:eq(3)').text(result.value.nuevoTipoPrecio);
+          Swal.fire('Actualizado', 'El producto ha sido modificado correctamente.', 'success');
+      }
+  });
+}
+
+// Función para agregar botones de editar y eliminar a cada fila
+function agregarBotones(fila) {
+  const botones = `
+      <td>
+          <button class="btn btn-warning btn-sm" onclick="editarFila($(this).closest('tr'))">Editar</button>
+          <button class="btn btn-danger btn-sm" onclick="eliminarFila($(this).closest('tr'))">Eliminar</button>
+      </td>
+  `;
+  fila.append(botones);
+}
+
+// Función para agregar una nueva fila
+function agregarALista() {
+  var nombreProducto = $("#buscarProducto").val();
+  var cantidad = $("#cantidad").val();
+  var tipoPrecio = $("input[name='tipoPrecio']:checked").val();
+  var producto = productos.find(function (producto) {
+      return producto.nombre === nombreProducto;
+  });
+
+  if (producto) {
+      if (!cantidad.match(/^\d+$/) || cantidad <= 0) {
+          alert("La cantidad debe ser un número entero mayor que cero.");
+          return;
+      }
+
+      var fila = $(`<tr>
+          <td>${producto.ean}</td>
+          <td>${cantidad}</td>
+          <td>${producto.nombre}</td>
+          <td>${tipoPrecio}</td>
+      </tr>`);
+      agregarBotones(fila);
+      $("#tablaProductos tbody").append(fila);
+      $("#buscarProducto").val("");
+      $("#cantidad").val("1");
+  } else {
+      alert("Producto no encontrado.");
   }
-  
-  function eliminarFila(boton) {
-    var fila = $(boton).closest("tr");
-    fila.remove();
-    guardarListadoEnLocalStorage();
-  }
-  
+}
+
+// Función para eliminar una fila
+function eliminarFila(fila) {
+  fila.remove();
+  Swal.fire('Eliminado', 'El producto ha sido eliminado.', 'success');
+}
+
   function guardarListadoEnLocalStorage() {
     var filas = [];
     $("#tablaProductos tbody tr").each(function () {
